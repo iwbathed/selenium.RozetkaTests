@@ -3,9 +3,8 @@
 <suite name="All Test Suite">
     <test verbose="2" name="D:/programing/my_projects/java/qa_projects/testRozetka">
         <classes>
-            <class name="test.searchNotebooks.SearchNotebooksTest">
-
-            </class>
+            <class name="test.search.SearchNotebooksTest"></class>
+            <class name="test.search.SearchComputersTest"></class>
         </classes>
     </test>
 </suite>

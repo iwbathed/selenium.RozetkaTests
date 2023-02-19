@@ -10,31 +10,37 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class RozetkaNotebooksListingPage extends BasePage {
-    public RozetkaNotebooksListingPage(WebDriver driver) {
+import static constants.Constant.ListingData.ExpectedElements;
+
+public class RozetkaListingPage extends BasePage {
+    public RozetkaListingPage(WebDriver driver) {
         super(driver);
     }
 
-    private final By card = By.xpath("//li[@class='catalog-grid__cell catalog-grid__cell_type_slim ng-star-inserted']");
+    private final By card = By.xpath(
+            "//li[@class='catalog-grid__cell catalog-grid__cell_type_slim ng-star-inserted']");
     private final By nextPageBtn = By.xpath("//a[@class='button button--gray button--medium " +
             "pagination__direction pagination__direction--forward ng-star-inserted']");
-    private final By previousPageBtn = By.xpath("//a[@class='button button--gray button--medium pagination__direction ng-star-inserted']");
+    private final By previousPageBtn = By.xpath(
+            "//a[@class='button button--gray button--medium pagination__direction ng-star-inserted']");
     private final By lastPageNavigationBtn = By.xpath("//li[@class='pagination__item ng-star-inserted'][last()]" +
             "//a[@class='pagination__link ng-star-inserted']");
     private final By price = By.xpath("//span[@class='goods-tile__price-value']");
-
     private final By lastCardElement = By.xpath("//li[contains(@class, 'catalog-grid__cell ')][last()]");
     private final By selectDrpSorting = By.xpath("//select[contains(@class, 'select-css')]");
 
     public By price(int i){
 
-        return By.xpath("//li[@class='catalog-grid__cell catalog-grid__cell_type_slim ng-star-inserted'][" + i + "]//span[@class='goods-tile__price-value']");
+        return By.xpath(
+                "//li[@class='catalog-grid__cell catalog-grid__cell_type_slim ng-star-inserted'][" + i + "]" +
+                        "//span[@class='goods-tile__price-value']");
     }
-    public RozetkaNotebooksListingPage checkCountCards(){
-//        waitElementIsVisibleFluent(nextPageBtn);
+
+    public RozetkaListingPage checkCountCards(){
         waitElementIsVisible(nextPageBtn);
+
         int countCards = driver.findElements(card).size();
-        Assert.assertEquals(countCards, 60 );
+        Assert.assertEquals(countCards, ExpectedElements );
         return this;
     }
 
@@ -43,19 +49,19 @@ public class RozetkaNotebooksListingPage extends BasePage {
         return Integer.parseInt(driver.findElement(lastPageNavigationBtn).getText());
     }
 
-    public RozetkaNotebooksListingPage goNextPage(){
+    public RozetkaListingPage goNextPage(){
         waitElementIsVisibleFluent(nextPageBtn);
         driver.findElement(nextPageBtn).click();
         return this;
     }
 
-    public RozetkaNotebooksListingPage goPreviousPage(){
+    public RozetkaListingPage goPreviousPage(){
         waitElementIsVisibleFluent(previousPageBtn);
         driver.findElement(previousPageBtn).click();
         return this;
     }
 
-    public RozetkaNotebooksListingPage chooseSorting(String sortType){
+    public RozetkaListingPage chooseSorting(String sortType){
         waitElementIsVisible(selectDrpSorting);
 
         for (int i=0; i< 3; i++){
@@ -64,24 +70,18 @@ public class RozetkaNotebooksListingPage extends BasePage {
                 break;
             } catch(StaleElementReferenceException e) {}
         }
-
         return this;
-
     }
 
-    public RozetkaNotebooksListingPage isSortedAsc(List<Integer> prices){
-
+    public RozetkaListingPage isSortedAsc(List<Integer> prices){
         List<Integer> pricesCopy = new ArrayList<>(prices);
         Collections.sort(pricesCopy);
 
-        System.out.println(prices);
-        System.out.println(pricesCopy);
         Assert.assertEquals(prices, pricesCopy);
         return this;
     }
 
-    public RozetkaNotebooksListingPage isSortedDesc(List<Integer> prices){
-
+    public RozetkaListingPage isSortedDesc(List<Integer> prices){
         List<Integer> pricesCopy = new ArrayList<>(prices);
         Collections.sort(pricesCopy, Collections.reverseOrder());
 
@@ -90,13 +90,11 @@ public class RozetkaNotebooksListingPage extends BasePage {
     }
 
     public List <Integer> getPricesOfElementsFromPage()  {
-
         waitElementIsVisibleFluent(lastCardElement);
 
         List <Integer> pricesValue = new ArrayList<>();
         String priceText;
         int cardsNumber = driver.findElements(price).size();
-        System.out.println("cardsNumber="+cardsNumber);
         WebElement price;
         for (int i=1; i < cardsNumber; i++){
             waitElementIsVisible(price(i));
@@ -106,19 +104,14 @@ public class RozetkaNotebooksListingPage extends BasePage {
                     priceText=price.getText();
                     break;
                 }catch (StaleElementReferenceException e){
-                    System.out.println("ii="+ii);
+                    System.out.println(ii + " " + e.getMessage());
                 }
-
             }
-
             priceText=priceText.replaceFirst("₴", "");
             pricesValue.add(Integer.parseInt( String.join("", priceText.split(" " ))));
         }
-//        System.out.println("prices.size() " + pricesValue.size());
         return pricesValue;
     }
-
-
 
     public List <Integer> getPricesOfElementsFromAllPages() {
         List<Integer> allPrices = new ArrayList<>();
@@ -128,7 +121,6 @@ public class RozetkaNotebooksListingPage extends BasePage {
             allPrices.addAll(getPricesOfElementsFromPage());
             goNextPage();
             waitUrlContains("page="+(i+1));
-            System.out.println("page = " + (i+1));
         }
         return allPrices;
     }

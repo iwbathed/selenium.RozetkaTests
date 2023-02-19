@@ -10,12 +10,17 @@ public class Constant {
     public static class Urls {
         public static final String ROZETKA_HOME_PAGE = "https://rozetka.com.ua/ua/";
     }
+    public static class ListingData {
+        public static final int ExpectedElements = 60;
+    }
+    public static class searchInput{
+        public static final String COMPUTERS = "комп'ютери";
+        public static final String NOTEBOOKS = "ноутбуки";
+    }
 
     public enum SortOptions {
         CHEAP ("Від дешевих до дорогих"),
-        EXPENSIVE ("Від дорогих до дешевих"),
-        RATING ("За рейтингом"),
-        NOVELTY ("Новинки");
+        EXPENSIVE ("Від дорогих до дешевих");
 
         private final String option;
         SortOptions(String option) {

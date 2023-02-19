@@ -4,7 +4,10 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 
 import static constants.Constant.TimeOutVariable.EXPLICITLY_WAIT;
@@ -39,8 +42,17 @@ public class BasePage {
         new WebDriverWait(driver, Duration.ofSeconds(EXPLICITLY_WAIT)).until(ExpectedConditions.urlContains(text));
     }
 
-//    public void waitUrlContain3s(By byValue) {
-//        WebElement W =  new WebDriverWait(driver, Duration.ofSeconds(EXPLICITLY_WAIT)).until(ExpectedConditions.presenceOfElementLocated(byValue));
-//        wait.until(ExpectedConditions.refreshed(ExpectedConditions.stalenessOf("table")));
-//    }
+    public void checkUrlContains(String text) {
+
+        boolean contains;
+        try {
+
+            contains= java.net.URLDecoder.decode(driver.getCurrentUrl(), StandardCharsets.UTF_8.name()).contains(text);
+
+        }catch (UnsupportedEncodingException e){
+            contains=false;
+        }
+        Assert.assertTrue(contains);
+
+    }
 }

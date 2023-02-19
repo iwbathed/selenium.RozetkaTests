@@ -6,7 +6,7 @@ import org.openqa.selenium.WebDriver;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.AfterTest;
 import pages.base.BasePage;
-import pages.listing.RozetkaNotebooksListingPage;
+import pages.listing.RozetkaListingPage;
 import pages.rozetka_home.RozetkaHomePage;
 
 import static common.Config.CLEAR_COOKIES_AND_STORAGE;
@@ -17,7 +17,7 @@ public class BaseTest {
     protected BasePage basePage = new BasePage(driver);
     protected RozetkaHomePage rozetkaHomePage = new RozetkaHomePage(driver);
 
-    protected RozetkaNotebooksListingPage rozetkaNotebooksListingPage = new RozetkaNotebooksListingPage(driver);
+    protected RozetkaListingPage rozetkaListingPage = new RozetkaListingPage(driver);
     @AfterTest
     public void clearCookiesAndLocalStorage(){
         if (CLEAR_COOKIES_AND_STORAGE) {
