@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static constants.Constant.ListingData.ExpectedElements;
+import static constants.Constant.ListingData.EXPECTED_ELEMENTS_NUMBER;
 
 public class RozetkaListingPage extends BasePage {
     public RozetkaListingPage(WebDriver driver) {
@@ -26,7 +26,7 @@ public class RozetkaListingPage extends BasePage {
     private final By lastPageNavigationBtn = By.xpath("//li[@class='pagination__item ng-star-inserted'][last()]" +
             "//a[@class='pagination__link ng-star-inserted']");
     private final By price = By.xpath("//span[@class='goods-tile__price-value']");
-    private final By lastCardElement = By.xpath("//li[contains(@class, 'catalog-grid__cell ')][last()]");
+    private final By lastCardElement = By.xpath("//li[contains(@class, 'catalog-grid__cell ')][60]");
     private final By selectDrpSorting = By.xpath("//select[contains(@class, 'select-css')]");
 
     public By price(int i){
@@ -40,7 +40,7 @@ public class RozetkaListingPage extends BasePage {
         waitElementIsVisible(nextPageBtn);
 
         int countCards = driver.findElements(card).size();
-        Assert.assertEquals(countCards, ExpectedElements );
+        Assert.assertEquals(countCards, EXPECTED_ELEMENTS_NUMBER);
         return this;
     }
 
@@ -64,11 +64,13 @@ public class RozetkaListingPage extends BasePage {
     public RozetkaListingPage chooseSorting(String sortType){
         waitElementIsVisible(selectDrpSorting);
 
-        for (int i=0; i< 3; i++){
+        for (int i=0;; i++){
             try {
                 new Select(driver.findElement(selectDrpSorting)).selectByVisibleText(sortType);
                 break;
-            } catch(StaleElementReferenceException e) {}
+            } catch(StaleElementReferenceException e) {
+                System.out.println(i + " " + e.getMessage());
+            }
         }
         return this;
     }
@@ -76,6 +78,8 @@ public class RozetkaListingPage extends BasePage {
     public RozetkaListingPage isSortedAsc(List<Integer> prices){
         List<Integer> pricesCopy = new ArrayList<>(prices);
         Collections.sort(pricesCopy);
+        System.out.println(prices);
+        System.out.println(pricesCopy);
 
         Assert.assertEquals(prices, pricesCopy);
         return this;
@@ -84,20 +88,22 @@ public class RozetkaListingPage extends BasePage {
     public RozetkaListingPage isSortedDesc(List<Integer> prices){
         List<Integer> pricesCopy = new ArrayList<>(prices);
         Collections.sort(pricesCopy, Collections.reverseOrder());
-
+        System.out.println(prices);
+        System.out.println(pricesCopy);
         Assert.assertEquals(prices, pricesCopy);
         return this;
     }
 
     public List <Integer> getPricesOfElementsFromPage()  {
-        waitElementIsVisibleFluent(lastCardElement);
+
 
         List <Integer> pricesValue = new ArrayList<>();
         String priceText;
         int cardsNumber = driver.findElements(price).size();
         WebElement price;
-        for (int i=1; i < cardsNumber; i++){
+        for (int i=1; i <=cardsNumber; i++){
             waitElementIsVisible(price(i));
+
             for(int ii=0;;ii++){
                 try {
                     price=driver.findElement(price(i));
@@ -110,18 +116,27 @@ public class RozetkaListingPage extends BasePage {
             priceText=priceText.replaceFirst("₴", "");
             pricesValue.add(Integer.parseInt( String.join("", priceText.split(" " ))));
         }
+
+
         return pricesValue;
     }
 
-    public List <Integer> getPricesOfElementsFromAllPages() {
+    public List <Integer> getPricesOfElementsFromAllPages(String sortType) {
         List<Integer> allPrices = new ArrayList<>();
-
+        waitUrlContains(sortType.toLowerCase());
         int pagesNumber = getPagesNumber();
-        for (int i = 1; i < pagesNumber; i++){
-            allPrices.addAll(getPricesOfElementsFromPage());
-            goNextPage();
-            waitUrlContains("page="+(i+1));
+        for (int currentPage = 1; currentPage <= pagesNumber; currentPage++){
+            if (currentPage==pagesNumber){
+                allPrices.addAll(getPricesOfElementsFromPage());
+            }else {
+                waitElementIsVisibleFluent(lastCardElement);
+                allPrices.addAll(getPricesOfElementsFromPage());
+                goNextPage();
+                waitUrlContains("page="+(currentPage+1));
+            }
+
         }
+        System.out.println(allPrices.size());
         return allPrices;
     }
 

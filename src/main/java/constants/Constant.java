@@ -11,7 +11,7 @@ public class Constant {
         public static final String ROZETKA_HOME_PAGE = "https://rozetka.com.ua/ua/";
     }
     public static class ListingData {
-        public static final int ExpectedElements = 60;
+        public static final int EXPECTED_ELEMENTS_NUMBER = 60;
     }
     public static class searchInput{
         public static final String COMPUTERS = "комп'ютери";
